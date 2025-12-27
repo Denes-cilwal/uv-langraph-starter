@@ -20,6 +20,7 @@ GENERATE = "generate"
 # then we are invoking on the state using the chain we have created and 
 # then we are appending that response to the history
 # this generate and reflect is automatically by ai itself
+# state is just a list of messages
 def generate_node(state):
     # whatever the state has been generated that need to be sit in message placeholder
     # whatever going to be returned object of llm,it is just going to extract the content and it is going to append that message to existing state
@@ -66,3 +67,13 @@ app = graph.compile()
 
 print(app.get_graph().draw_mermaid())
 app.get_graph().print_ascii()
+
+
+# whatever we add here it will added to message place | history list ()
+response = app.invoke(HumanMessage(content="AI Agents taking over content creation"))
+
+print(response)
+
+"""
+system message is going to different for each of the chains and both of those chains are going to share increasing getting message history
+"""
