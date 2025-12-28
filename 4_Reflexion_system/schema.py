@@ -31,4 +31,13 @@ class AnswerQuestion(BaseModel):
         description="Your reflection on the initial answer.")
 
 
+# this revise inherits all base properties including references
+class ReviseAnswer(AnswerQuestion):
+    """Revise your original answer to your question."""
+
+    references: List[str] = Field(
+        description="Citations motivating your updated answer."
+    )
+
+
 
