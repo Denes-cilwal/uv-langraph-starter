@@ -1,7 +1,7 @@
 import json
 from typing import List, Dict, Any
 from langchain_core.messages import AIMessage, BaseMessage, ToolMessage, HumanMessage
-from langchain_community.tools import TavilySearchResults
+from langchain_community.tools.tavily_search import TavilySearchResults
 
 # Create the Tavily search tool
 tavily_tool = TavilySearchResults(max_results=5)
@@ -71,16 +71,10 @@ test_state = [
     HumanMessage(
         content="Write about how small business can leverage AI to grow"
     ),
-
-"""
-The Human Message vs. The AI Message
-The Human Message: This contains the user's request (e.g., "Write about AI agents"). It definitely has content.
-
-The AI Message: When the AI decides it needs to search the internet, it stops writing text to the user and instead "calls" a tool
-In your test_state example, the AIMessage has content="". This is because the AI is not talking to the user yet. It is purely focused on triggering the next step in the loop
-
-"""
-
+    # The Human Message vs. The AI Message
+    # The Human Message: This contains the user's request (e.g., "Write about AI agents"). It definitely has content.
+    # The AI Message: When the AI decides it needs to search the internet, it stops writing text to the user and instead "calls" a tool
+    # In your test_state example, the AIMessage has content="". This is because the AI is not talking to the user yet. It is purely focused on triggering the next step in the loop
     AIMessage(
         content="", 
         tool_calls=[

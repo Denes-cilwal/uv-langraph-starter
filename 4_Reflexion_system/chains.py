@@ -52,8 +52,10 @@ llm = ChatOpenAI(model="gpt-4o")
 
 
 # first_responsder_chain
-first_responder_chain = first_responder_prompt_template | llm.bind_tools(tools=[AnswerQuestion], tool_choice='AnswerQuestion') |  pydantic_parser  # ← Parses AIMessage → AnswerQuestion object
+first_responder_chain = first_responder_prompt_template | llm.bind_tools(tools=[AnswerQuestion], tool_choice='AnswerQuestion')  
 
+# ← Parses AIMessage → AnswerQuestion object
+validator = PydanticToolsParser(tools=[AnswerQuestion]) 
 
 
 # reviser chain - whatever responser is providing  and based on search result, reviser has to look all of that 
