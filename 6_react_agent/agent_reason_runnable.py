@@ -1,17 +1,21 @@
 
 
 from langchain_openai import ChatOpenAI
-# Import two things from langchain.agents:
+
+# Import the tool decorator from langchain_core.tools
 # - tool: A decorator to convert Python functions into tools the AI can use
-# - create_react_agent: A factory function that builds the ReAct agent logic
-from langchain.agents import tool, create_react_agent
+from langchain_core.tools import tool
+
+# Import create_agent from langchain.agents (modern API)
+# - create_agent: Creates an agent that can use tools (replaces old create_react_agent)
+from langchain.agents import create_agent
 
 # Import Python's built-in datetime module for time operations
 import datetime
 
 # Import Tavily web search tool (like giving the AI access to Google search)
 from langchain_community.tools import TavilySearchResults
-from langchain import hub
+
 
 
 # ============================================
@@ -53,20 +57,8 @@ def get_system_time(format: str = "%Y-%m-%d %H:%M:%S"):
 search_tool = TavilySearchResults(search_depth="basic")
 
 
-
-
-# Download the standard ReAct prompt from LangChain's hub
-# This prompt template teaches the AI how to:
-# - Think step by step (Thought)
-# - Use tools when needed (Action)
-# - Process results (Observation)
-# - Loop until it has enough info to answer
-# Format: "hwchase17/react" is the prompt ID on LangChain Hub
-react_prompt = hub.pull("hwchase17/react")
-
-
 # ============================================
-# STEP 5: Bundle All Tools Together
+# STEP 4: Bundle All Tools Together
 # ============================================
 
 # Create a list of all available tools
@@ -77,7 +69,7 @@ tools = [get_system_time, search_tool]
 
 
 # ============================================
-# STEP 6: Create the ReAct Agent Runnable
+# STEP 5: Create the ReAct Agent Runnable
 # ============================================
 
 # *** WHAT IS A RUNNABLE? ***
@@ -93,28 +85,23 @@ tools = [get_system_time, search_tool]
 # Think of it like an assembly line in a factory - each station does its job
 # and passes the result to the next station.
 
-# create_react_agent builds a Runnable that creates the "thinking logic" chain:
+# create_agent builds a Runnable that creates the "thinking logic" chain:
 # Step 1: Format the prompt with tools info and user input
 # Step 2: Send formatted prompt to the LLM
 # Step 3: Parse LLM's response to detect if it wants to use a tool or give final answer
 # Step 4: Return structured output (tool call OR final answer)
 #
 # It combines:
+# - model: The brain (LLM) that makes decisions
 # - tools: What actions the AI can take
-# - llm: The brain that makes decisions
-# - prompt: The instructions on HOW to think (ReAct pattern)
 #
+# Note: create_agent uses the modern LangChain API and works with message-based format
 # What this Runnable DOES:
 # ✅ Formats prompts correctly with tool descriptions
 # ✅ Calls the LLM and gets a response
 # ✅ Parses the response to understand what the LLM wants to do
 # ✅ Returns structured output indicating the next action
+# ✅ Can be invoked directly with messages format
 #
-# What it CANNOT do (needs AgentExecutor):
-# ❌ Actually execute the tools
-# ❌ Handle the loop (repeating Thought→Action→Observation)
-# ❌ Manage conversation state/memory
-# ❌ Return final answers to users
-#
-# To make it work, you need to wrap it in AgentExecutor (not shown here)
-react_agent_runnable = create_react_agent(tools=tools, llm=llm, prompt=react_prompt)
+# Usage: agent.invoke({"messages": [("user", "your question")]})
+react_agent_runnable = create_agent(model=llm, tools=tools)
