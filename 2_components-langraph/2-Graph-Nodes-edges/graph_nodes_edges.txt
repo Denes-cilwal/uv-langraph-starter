@@ -1,0 +1,6 @@
+- first step(goals) in langraph work flow to break down given goal to actionable steps
+- Each nodes behind the scene is python functions interconnected 
+with help of edges
+- Node(what to execute) vs Edges(When to execute)
+
+
